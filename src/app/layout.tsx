@@ -1,0 +1,38 @@
+import Link from "next/link";
+import type { Metadata } from "next";
+import "./globals.css";
+import { getAdminSession } from "@/lib/auth";
+
+export const metadata: Metadata = {
+  title: "Food Menu System",
+  description: "Menu management and ordering system for shared meal planning.",
+};
+
+export default async function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  const adminSession = await getAdminSession();
+
+  return (
+    <html lang="zh-CN">
+      <body>
+        <header className="site-header">
+          <div className="shell site-header__inner">
+            <Link href="/" className="brand">
+              <strong>Food Menu</strong>
+              <span>菜单管理、点单会话、后台审核</span>
+            </Link>
+            <nav className="nav-links">
+              <Link href="/">菜单</Link>
+              <Link href="/admin">后台</Link>
+              {adminSession ? <span className="tag tag--success">Admin: {adminSession.email}</span> : null}
+            </nav>
+          </div>
+        </header>
+        {children}
+      </body>
+    </html>
+  );
+}

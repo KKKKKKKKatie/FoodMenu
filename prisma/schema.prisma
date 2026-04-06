@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum SpiceLevel {
+  NONE
+  MILD
+  MEDIUM
+  HOT
+  EXTREME
+}
+
+enum Complexity {
+  SIMPLE
+  STANDARD
+  COMPLEX
+}
+
+enum CookingMethod {
+  STIR_FRY
+  BRAISE
+  STEW
+  COLD_DISH
+  STEAM
+  DEEP_FRY
+  OTHER
+}
+
+enum OrderStatus {
+  PENDING
+  APPROVED
+  PARTIAL
+  REJECTED
+  FULFILLED
+}
+
+enum OrderItemStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model MenuItem {
+  id               String         @id @default(cuid())
+  name             String
+  chineseName      String?
+  description      String?
+  priceCents       Int
+  isAvailable      Boolean        @default(true)
+  spiceLevel       SpiceLevel     @default(NONE)
+  complexity       Complexity     @default(STANDARD)
+  cookingMethod    CookingMethod  @default(OTHER)
+  categories       String[]
+  ingredientTags   String[]
+  imageUrl         String?
+  recipe           Recipe?
+  orderItems       OrderItem[]
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+}
+
+model Recipe {
+  id              String   @id @default(cuid())
+  menuItemId      String   @unique
+  title           String
+  ingredientNotes String?
+  steps           String?
+  menuItem        MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model OrderSession {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  isActive    Boolean  @default(true)
+  startsAt    DateTime @default(now())
+  endsAt      DateTime?
+  orders      Order[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Order {
+  id           String      @id @default(cuid())
+  sessionId    String
+  customerName String
+  note         String?
+  status       OrderStatus @default(PENDING)
+  session      OrderSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  items        OrderItem[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+model OrderItem {
+  id              String          @id @default(cuid())
+  orderId         String
+  menuItemId      String
+  itemName        String
+  quantity        Int
+  note            String?
+  unitPriceCents  Int
+  status          OrderItemStatus @default(PENDING)
+  rejectionReason String?
+  order           Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItem        MenuItem        @relation(fields: [menuItemId], references: [id], onDelete: Restrict)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
