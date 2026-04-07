@@ -33,13 +33,13 @@ export default async function AdminDashboardPage() {
             <h2>Quick Actions</h2>
           </div>
           <div className="split-actions">
-            <Link href="/admin/menu/new" className="button button--accent">
+            <Link href="/admin/menu/new" className="button button--accent button--compact">
               Add Menu Item
             </Link>
-            <Link href="/admin/sessions/new" className="button button--ghost">
+            <Link href="/admin/sessions/new" className="button button--ghost button--compact">
               Create Session
             </Link>
-            <Link href="/admin/orders" className="button button--ghost">
+            <Link href="/admin/orders" className="button button--ghost button--compact">
               View Orders
             </Link>
           </div>

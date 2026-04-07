@@ -2,7 +2,20 @@
 
 A no-cost-friendly food menu and ordering system built with Next.js, Prisma, and PostgreSQL.
 
-Deployed demo: https://food-menu-c295zjfvg-foodmenu.vercel.app/
+Deployed demo: https://food-menu-ten-iota.vercel.app/
+
+## Typical use case
+
+This project is mainly designed for family parties, shared meals, and small home gatherings.
+
+The usual flow is:
+
+1. The host creates or updates the menu.
+2. The host opens an ordering session and shares the session link with family members.
+3. Each member browses the menu and submits the dishes they want.
+4. The host reviews the incoming orders and prepares the food in advance.
+
+This makes it easier for one person to coordinate the meal while letting everyone choose what they want to eat.
 
 ## What this project includes
 

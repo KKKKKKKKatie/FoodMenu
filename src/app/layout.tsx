@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import "./globals.css";
+import { BackButton } from "@/components/back-button";
 import { getAdminSession } from "@/lib/auth";
 
 export const metadata: Metadata = {
@@ -31,6 +32,9 @@ export default async function RootLayout({
             </nav>
           </div>
         </header>
+        <div className="shell page-topbar">
+          <BackButton />
+        </div>
         {children}
       </body>
     </html>
