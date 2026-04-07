@@ -76,6 +76,23 @@ export type OrderRecord = {
   items: OrderItemRecord[];
 };
 
+export type SessionOrderRecord = {
+  id: string;
+  customerName: string;
+  note: string | null;
+  status: OrderStatus;
+  createdAt: string;
+  items: Array<{
+    id: string;
+    itemName: string;
+    quantity: number;
+    note: string | null;
+    unitPriceCents: number;
+    status: OrderItemStatus;
+    rejectionReason: string | null;
+  }>;
+};
+
 type LocalData = {
   menuItems: MenuItemRecord[];
   sessions: OrderSessionRecord[];
@@ -529,6 +546,60 @@ export async function listOrders() {
     })
     .sort((left, right) => right.createdAt.localeCompare(left.createdAt))
     .slice(0, 30);
+}
+
+export async function listOrdersBySession(sessionId: string): Promise<SessionOrderRecord[]> {
+  if (hasDatabase) {
+    const orders = await db.order.findMany({
+      where: { sessionId },
+      include: {
+        items: {
+          orderBy: { createdAt: "asc" },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 50,
+    });
+
+    return orders.map((order) => ({
+      id: order.id,
+      customerName: order.customerName,
+      note: order.note,
+      status: order.status,
+      createdAt: order.createdAt.toISOString(),
+      items: order.items.map((item) => ({
+        id: item.id,
+        itemName: item.itemName,
+        quantity: item.quantity,
+        note: item.note,
+        unitPriceCents: item.unitPriceCents,
+        status: item.status,
+        rejectionReason: item.rejectionReason,
+      })),
+    }));
+  }
+
+  const data = await readLocalData();
+  return data.orders
+    .filter((order) => order.sessionId === sessionId)
+    .map((order) => ({
+      id: order.id,
+      customerName: order.customerName,
+      note: order.note,
+      status: order.status,
+      createdAt: order.createdAt,
+      items: order.items.map((item) => ({
+        id: item.id,
+        itemName: item.itemName,
+        quantity: item.quantity,
+        note: item.note,
+        unitPriceCents: item.unitPriceCents,
+        status: item.status,
+        rejectionReason: item.rejectionReason,
+      })),
+    }))
+    .sort((left, right) => right.createdAt.localeCompare(left.createdAt))
+    .slice(0, 50);
 }
 
 export async function createOrder(input: {

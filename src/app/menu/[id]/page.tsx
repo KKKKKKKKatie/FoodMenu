@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import { MenuVisual } from "@/components/menu-visual";
 import { complexityLabels, cookingMethodLabels, spiceLevelLabels } from "@/lib/constants";
 import { getMenuItemById, listSessions } from "@/lib/data-store";
-import { formatCurrency } from "@/lib/format";
 
 export default async function MenuDetailPage({
   params,
@@ -51,22 +50,19 @@ export default async function MenuDetailPage({
             </span>
           </div>
 
-          <div className="detail-price-row">
-            <strong>{formatCurrency(item.priceCents)}</strong>
-            <div className="split-actions">
-              <Link href="/" className="button button--ghost">
-                Back to Home
+          <div className="split-actions">
+            <Link href="/" className="button button--ghost">
+              Back to Home
+            </Link>
+            {linkedSession ? (
+              <Link href={`/order/${linkedSession.slug}`} className="button button--accent">
+                Back to {linkedSession.name}
               </Link>
-              {linkedSession ? (
-                <Link href={`/order/${linkedSession.slug}`} className="button button--accent">
-                  Back to {linkedSession.name}
-                </Link>
-              ) : sessions[0] ? (
-                <Link href={`/order/${sessions[0].slug}`} className="button button--accent">
-                  Start Ordering
-                </Link>
-              ) : null}
-            </div>
+            ) : sessions[0] ? (
+              <Link href={`/order/${sessions[0].slug}`} className="button button--accent">
+                Start Ordering
+              </Link>
+            ) : null}
           </div>
 
           {item.ingredientTags.length > 0 ? (
@@ -80,7 +76,6 @@ export default async function MenuDetailPage({
             <div className="stack">
               <h3>{item.recipe.title}</h3>
               {item.recipe.ingredientNotes ? <p className="muted">{item.recipe.ingredientNotes}</p> : null}
-              {item.recipe.steps ? <p>{item.recipe.steps}</p> : null}
             </div>
           ) : null}
         </div>

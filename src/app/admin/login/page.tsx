@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { loginAction } from "@/app/admin/actions";
+import { AdminLoginForm } from "@/components/admin-login-form";
 import { getAdminSession } from "@/lib/auth";
 import { hasConfiguredAdminAuth } from "@/lib/runtime-auth";
 
@@ -19,26 +20,12 @@ export default async function AdminLoginPage({
 
   return (
     <main className="shell hero">
-      <div className="hero__panel" style={{ maxWidth: 520, margin: "0 auto" }}>
+      <div className="hero__panel" style={{ maxWidth: 680, margin: "0 auto" }}>
         <span className="eyebrow">Admin Login</span>
-        <h1>Admin Sign In</h1>
+        <h1 className="hero-title--compact">Admin Sign In</h1>
         <p className="muted">Only admins can access menu editing, session creation, and live order review.</p>
 
-        <form action={loginAction} className="stack">
-          {usingDemoCredentials ? (
-            <p className="notice">Local demo login: admin@example.com / demo123456. This will switch automatically once environment variables are configured.</p>
-          ) : null}
-          <div className="field">
-            <label htmlFor="email">Email</label>
-            <input id="email" name="email" type="email" placeholder="admin@example.com" required />
-          </div>
-          <div className="field">
-            <label htmlFor="password">Password</label>
-            <input id="password" name="password" type="password" required />
-          </div>
-          {hasError ? <p className="notice">Incorrect email or password.</p> : null}
-          <button type="submit">Sign In</button>
-        </form>
+        <AdminLoginForm action={loginAction} hasError={hasError} usingDemoCredentials={usingDemoCredentials} />
       </div>
     </main>
   );

@@ -52,10 +52,7 @@ export function MenuItemForm({
         <textarea id="description" name="description" defaultValue={item?.description ?? ""} />
       </div>
 
-      <div className="field">
-        <label htmlFor="priceCents">Price (cents)</label>
-        <input id="priceCents" name="priceCents" type="number" min="0" defaultValue={item?.priceCents ?? 0} required />
-      </div>
+      <input id="priceCents" name="priceCents" type="hidden" value={String(item?.priceCents ?? 0)} />
 
       <div className="field">
         <label htmlFor="categories">Categories (comma-separated)</label>
@@ -137,10 +134,6 @@ export function MenuItemForm({
             name="recipeIngredients"
             defaultValue={item?.recipe?.ingredientNotes ?? ""}
           />
-        </div>
-        <div className="field">
-          <label htmlFor="recipeSteps">Steps / Prep Notes</label>
-          <textarea id="recipeSteps" name="recipeSteps" defaultValue={item?.recipe?.steps ?? ""} />
         </div>
       </div>
 

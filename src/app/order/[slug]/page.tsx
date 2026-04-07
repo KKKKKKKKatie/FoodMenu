@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { OrderSessionClient } from "@/components/order-session-client";
-import { getSessionBySlug, listMenuItems } from "@/lib/data-store";
+import { getSessionBySlug, listMenuItems, listOrdersBySession } from "@/lib/data-store";
 
 export default async function OrderSessionPage({
   params,
@@ -21,7 +21,11 @@ export default async function OrderSessionPage({
     notFound();
   }
 
-  const menuItems = (await listMenuItems()).filter((item) => item.isAvailable);
+  const [menuItems, initialOrders] = await Promise.all([
+    listMenuItems(),
+    listOrdersBySession(session.id),
+  ]);
+  const availableItems = menuItems.filter((item) => item.isAvailable);
 
   return (
     <main className="shell hero">
@@ -35,7 +39,8 @@ export default async function OrderSessionPage({
         sessionId={session.id}
         sessionSlug={session.slug}
         sessionName={session.name}
-        menuItems={menuItems}
+        menuItems={availableItems}
+        initialOrders={initialOrders}
       />
     </main>
   );

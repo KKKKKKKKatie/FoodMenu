@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
-import type { MenuItemRecord } from "@/lib/data-store";
-import { formatCurrency } from "@/lib/format";
+import { useEffect, useMemo, useState } from "react";
+import { orderItemStatusLabels, orderStatusLabels } from "@/lib/constants";
+import type { MenuItemRecord, SessionOrderRecord } from "@/lib/data-store";
 import { MenuVisual } from "@/components/menu-visual";
 
 type CartEntry = {
@@ -14,14 +14,14 @@ type CartEntry = {
 
 type MenuOrderItem = Pick<
   MenuItemRecord,
-  "id" | "name" | "chineseName" | "description" | "priceCents" | "imageUrl" | "isAvailable" | "ingredientTags"
+  "id" | "name" | "chineseName" | "description" | "imageUrl" | "isAvailable" | "ingredientTags"
 >;
 
 type CartDisplayEntry = CartEntry & {
   item: MenuOrderItem;
 };
 
-const storedIdentityKey = "foodmenu_identity_name";
+const storedIdentityKey = "foodmenu_order_name";
 
 function readStoredIdentity() {
   if (typeof window === "undefined") {
@@ -36,20 +36,21 @@ export function OrderSessionClient({
   sessionSlug,
   sessionName,
   menuItems,
+  initialOrders,
 }: {
   sessionId: string;
   sessionSlug: string;
   sessionName: string;
   menuItems: MenuOrderItem[];
+  initialOrders: SessionOrderRecord[];
 }) {
-  const [identityMode, setIdentityMode] = useState<"member" | "guest">("member");
-  const [memberName, setMemberName] = useState(readStoredIdentity);
-  const [guestName, setGuestName] = useState("");
+  const [customerName, setCustomerName] = useState(readStoredIdentity);
   const [savedName, setSavedName] = useState(readStoredIdentity);
   const [orderNote, setOrderNote] = useState("");
   const [status, setStatus] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [cart, setCart] = useState<Record<string, CartEntry>>({});
+  const [orders, setOrders] = useState(initialOrders);
 
   const cartItems = useMemo(
     () =>
@@ -61,13 +62,6 @@ export function OrderSessionClient({
         .filter((entry): entry is CartDisplayEntry => entry !== null),
     [cart, menuItems],
   );
-
-  const total = cartItems.reduce((sum, entry) => {
-    if (!entry) {
-      return sum;
-    }
-    return sum + entry.item.priceCents * entry.quantity;
-  }, 0);
 
   function updateQuantity(menuItemId: string, delta: number) {
     setCart((current) => {
@@ -107,14 +101,10 @@ export function OrderSessionClient({
     });
   }
 
-  function getCheckoutName() {
-    return identityMode === "member" ? memberName.trim() : guestName.trim();
-  }
-
   async function submitOrder() {
-    const checkoutName = getCheckoutName();
+    const checkoutName = customerName.trim();
     if (!checkoutName) {
-      setStatus(identityMode === "member" ? "Please enter a member name first." : "Please enter a guest name.");
+      setStatus("Please enter your name before ordering.");
       return;
     }
 
@@ -126,7 +116,7 @@ export function OrderSessionClient({
     setSubmitting(true);
     setStatus("");
 
-    if (identityMode === "member" && typeof window !== "undefined") {
+    if (typeof window !== "undefined") {
       window.localStorage.setItem(storedIdentityKey, checkoutName);
       setSavedName(checkoutName);
     }
@@ -139,7 +129,7 @@ export function OrderSessionClient({
       body: JSON.stringify({
         sessionId,
         customerName: checkoutName,
-        customerMode: identityMode,
+        customerMode: "member",
         note: orderNote,
         items: cartItems.map((entry) => ({
           menuItemId: entry.item.id,
@@ -159,59 +149,56 @@ export function OrderSessionClient({
     setStatus(`Your order has been submitted to ${sessionName}. The admin dashboard will see it right away.`);
     setCart({});
     setOrderNote("");
-    if (identityMode === "guest") {
-      setGuestName("");
-    }
     setSubmitting(false);
+    const refreshResponse = await fetch(`/api/order/session/${sessionSlug}`, { cache: "no-store" });
+    if (refreshResponse.ok) {
+      const refreshPayload = (await refreshResponse.json()) as { orders: SessionOrderRecord[] };
+      setOrders(refreshPayload.orders);
+    }
   }
+
+  useEffect(() => {
+    const refreshOrders = async () => {
+      const response = await fetch(`/api/order/session/${sessionSlug}`, { cache: "no-store" });
+      if (!response.ok) {
+        return;
+      }
+
+      const payload = (await response.json()) as { orders: SessionOrderRecord[] };
+      setOrders(payload.orders);
+    };
+
+    void refreshOrders();
+    const timer = window.setInterval(() => {
+      void refreshOrders();
+    }, 5000);
+
+    return () => {
+      window.clearInterval(timer);
+    };
+  }, [sessionSlug]);
 
   return (
     <div className="order-layout">
       <section className="stack">
         <div className="form-panel stack">
           <div className="row">
-            <h2>Identity</h2>
-            {savedName ? <span className="tag tag--success">Saved member: {savedName}</span> : null}
+            <h2>Your Order</h2>
+            {savedName ? <span className="tag tag--success">Saved name: {savedName}</span> : null}
           </div>
 
-          <div className="segmented-control">
-            <button
-              type="button"
-              className={`button ${identityMode === "member" ? "button--accent" : "button--ghost"}`}
-              onClick={() => setIdentityMode("member")}
-            >
-              Member
-            </button>
-            <button
-              type="button"
-              className={`button ${identityMode === "guest" ? "button--accent" : "button--ghost"}`}
-              onClick={() => setIdentityMode("guest")}
-            >
-              Guest
-            </button>
+          <div className="field">
+            <label htmlFor="customerName">Your Name</label>
+            <input
+              id="customerName"
+              value={customerName}
+              onChange={(event) => setCustomerName(event.target.value)}
+              placeholder="For example: Katie"
+            />
           </div>
-
-          {identityMode === "member" ? (
-            <div className="field">
-              <label htmlFor="memberName">Member Name</label>
-              <input
-                id="memberName"
-                value={memberName}
-                onChange={(event) => setMemberName(event.target.value)}
-                placeholder="For example: Katie"
-              />
-            </div>
-          ) : (
-            <div className="field">
-              <label htmlFor="guestName">Guest Name</label>
-              <input
-                id="guestName"
-                value={guestName}
-                onChange={(event) => setGuestName(event.target.value)}
-                placeholder="For example: Alex (Guest)"
-              />
-            </div>
-          )}
+          <p className="muted">
+            Submitted orders appear below so everyone can see what has already been requested.
+          </p>
         </div>
 
         <div className="row">
@@ -231,7 +218,6 @@ export function OrderSessionClient({
                       <h3>{item.chineseName || item.name}</h3>
                       <p className="muted">{item.description || "Open the detail page to view more information."}</p>
                     </div>
-                    <strong>{formatCurrency(item.priceCents)}</strong>
                   </div>
 
                   {item.ingredientTags.length > 0 ? (
@@ -292,10 +278,7 @@ export function OrderSessionClient({
 
             return (
               <div key={entry.item.id} className="cart-item">
-                <div className="row">
-                  <strong>{entry.item.chineseName || entry.item.name}</strong>
-                  <span>{formatCurrency(entry.item.priceCents * entry.quantity)}</span>
-                </div>
+                <strong>{entry.item.chineseName || entry.item.name}</strong>
                 <div className="split-actions">
                   <button type="button" className="button button--ghost" onClick={() => updateQuantity(entry.item.id, -1)}>
                     -
@@ -321,17 +304,54 @@ export function OrderSessionClient({
           />
         </div>
 
-        <div className="row cart-total">
-          <strong>Total</strong>
-          <strong>{formatCurrency(total)}</strong>
-        </div>
-
         {status ? <p className="notice">{status}</p> : null}
 
         <button type="button" onClick={submitOrder} disabled={submitting}>
           {submitting ? "Submitting..." : "Submit Cart"}
         </button>
       </aside>
+
+      <section className="form-panel stack order-session-feed">
+        <div className="row">
+          <h2>Shared Orders</h2>
+          <span className="tag">{orders.length} submitted</span>
+        </div>
+
+        {orders.length === 0 ? (
+          <p className="muted">No one has submitted an order yet. You can be the first.</p>
+        ) : (
+          <div className="table-list">
+            {orders.map((order) => (
+              <article key={order.id} className="table-row">
+                <div className="row">
+                  <div className="stack">
+                    <strong>{order.customerName}</strong>
+                    <span className="status-pill">{orderStatusLabels[order.status]}</span>
+                  </div>
+                  <span className="muted">{new Date(order.createdAt).toLocaleString()}</span>
+                </div>
+
+                {order.note ? <p className="muted">Order note: {order.note}</p> : null}
+
+                <div className="order-items">
+                  {order.items.map((item) => (
+                    <div key={item.id} className="order-item stack">
+                    <div className="row">
+                      <strong>
+                        {item.itemName} x {item.quantity}
+                      </strong>
+                    </div>
+                      <span className="status-pill">{orderItemStatusLabels[item.status]}</span>
+                      {item.note ? <span className="muted">Note: {item.note}</span> : null}
+                      {item.rejectionReason ? <span className="muted">Reason: {item.rejectionReason}</span> : null}
+                    </div>
+                  ))}
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
     </div>
   );
 }
