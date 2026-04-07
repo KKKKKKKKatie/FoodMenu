@@ -90,7 +90,7 @@ export async function saveMenuItemAction(formData: FormData) {
   const recipe =
     parsed.recipeTitle || parsed.recipeIngredients || parsed.recipeSteps
       ? {
-          title: parsed.recipeTitle || `${parsed.name} 做法`,
+          title: parsed.recipeTitle || `${parsed.name} Recipe`,
           ingredientNotes: parsed.recipeIngredients || null,
           steps: parsed.recipeSteps || null,
         }

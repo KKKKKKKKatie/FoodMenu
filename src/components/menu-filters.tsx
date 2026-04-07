@@ -25,23 +25,22 @@ export function MenuFilters({
     <aside className="filter-card filter-card--shell">
       <div className="filter-card__head">
         <div className="stack">
-          <h2>筛选菜单</h2>
-          <p className="muted">在手机上可以先收起筛选，专心浏览菜品卡片。</p>
+          <h2>Filters</h2>
         </div>
         <button
           type="button"
           className="button button--ghost filter-card__toggle"
           onClick={() => setOpen((value) => !value)}
         >
-          {open ? "收起筛选" : "打开筛选"}
+          {open ? "Hide Filters" : "Show Filters"}
         </button>
       </div>
 
       <form className={`filter-form filter-form--drawer ${open ? "is-open" : ""}`} method="get">
         <div className="field">
-          <label htmlFor="category">分类</label>
+          <label htmlFor="category">Category</label>
           <select id="category" name="category" defaultValue={current.category ?? ""}>
-            <option value="">全部</option>
+            <option value="">All</option>
             {categories.map((category) => (
               <option key={category} value={category}>
                 {category}
@@ -51,9 +50,9 @@ export function MenuFilters({
         </div>
 
         <div className="field">
-          <label htmlFor="ingredient">食材</label>
+          <label htmlFor="ingredient">Ingredient</label>
           <select id="ingredient" name="ingredient" defaultValue={current.ingredient ?? ""}>
-            <option value="">全部</option>
+            <option value="">All</option>
             {ingredients.map((ingredient) => (
               <option key={ingredient} value={ingredient}>
                 {ingredient}
@@ -63,9 +62,9 @@ export function MenuFilters({
         </div>
 
         <div className="field">
-          <label htmlFor="spiceLevel">辣度</label>
+          <label htmlFor="spiceLevel">Spice Level</label>
           <select id="spiceLevel" name="spiceLevel" defaultValue={current.spiceLevel ?? ""}>
-            <option value="">全部</option>
+            <option value="">All</option>
             {Object.entries(spiceLevelLabels).map(([value, label]) => (
               <option key={value} value={value}>
                 {label}
@@ -75,9 +74,9 @@ export function MenuFilters({
         </div>
 
         <div className="field">
-          <label htmlFor="complexity">复杂程度</label>
+          <label htmlFor="complexity">Complexity</label>
           <select id="complexity" name="complexity" defaultValue={current.complexity ?? ""}>
-            <option value="">全部</option>
+            <option value="">All</option>
             {Object.entries(complexityLabels).map(([value, label]) => (
               <option key={value} value={value}>
                 {label}
@@ -87,9 +86,9 @@ export function MenuFilters({
         </div>
 
         <div className="field">
-          <label htmlFor="cookingMethod">做法</label>
+          <label htmlFor="cookingMethod">Cooking Method</label>
           <select id="cookingMethod" name="cookingMethod" defaultValue={current.cookingMethod ?? ""}>
-            <option value="">全部</option>
+            <option value="">All</option>
             {Object.entries(cookingMethodLabels).map(([value, label]) => (
               <option key={value} value={value}>
                 {label}
@@ -99,9 +98,9 @@ export function MenuFilters({
         </div>
 
         <div className="split-actions">
-          <button type="submit">应用筛选</button>
+          <button type="submit">Apply Filters</button>
           <Link href="/" className="button button--ghost">
-            清空
+            Reset
           </Link>
         </div>
       </form>

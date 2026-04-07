@@ -114,12 +114,12 @@ export function OrderSessionClient({
   async function submitOrder() {
     const checkoutName = getCheckoutName();
     if (!checkoutName) {
-      setStatus(identityMode === "member" ? "请先输入用户名登录。" : "请填写游客称呼。");
+      setStatus(identityMode === "member" ? "Please enter a member name first." : "Please enter a guest name.");
       return;
     }
 
     if (cartItems.length === 0) {
-      setStatus("购物车还是空的，先加几道菜吧。");
+      setStatus("Your cart is still empty. Add a few dishes first.");
       return;
     }
 
@@ -151,12 +151,12 @@ export function OrderSessionClient({
 
     if (!response.ok) {
       const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-      setStatus(payload?.error ?? "提交失败，请稍后再试。");
+      setStatus(payload?.error ?? "Submission failed. Please try again.");
       setSubmitting(false);
       return;
     }
 
-    setStatus(`订单已提交到 ${sessionName}。管理员面板会实时看到。`);
+    setStatus(`Your order has been submitted to ${sessionName}. The admin dashboard will see it right away.`);
     setCart({});
     setOrderNote("");
     if (identityMode === "guest") {
@@ -170,8 +170,8 @@ export function OrderSessionClient({
       <section className="stack">
         <div className="form-panel stack">
           <div className="row">
-            <h2>身份方式</h2>
-            {savedName ? <span className="tag tag--success">已保存用户：{savedName}</span> : null}
+            <h2>Identity</h2>
+            {savedName ? <span className="tag tag--success">Saved member: {savedName}</span> : null}
           </div>
 
           <div className="segmented-control">
@@ -180,43 +180,43 @@ export function OrderSessionClient({
               className={`button ${identityMode === "member" ? "button--accent" : "button--ghost"}`}
               onClick={() => setIdentityMode("member")}
             >
-              用户登录
+              Member
             </button>
             <button
               type="button"
               className={`button ${identityMode === "guest" ? "button--accent" : "button--ghost"}`}
               onClick={() => setIdentityMode("guest")}
             >
-              游客下单
+              Guest
             </button>
           </div>
 
           {identityMode === "member" ? (
             <div className="field">
-              <label htmlFor="memberName">用户名</label>
+              <label htmlFor="memberName">Member Name</label>
               <input
                 id="memberName"
                 value={memberName}
                 onChange={(event) => setMemberName(event.target.value)}
-                placeholder="例如：Katie / 小王"
+                placeholder="For example: Katie"
               />
             </div>
           ) : (
             <div className="field">
-              <label htmlFor="guestName">游客称呼</label>
+              <label htmlFor="guestName">Guest Name</label>
               <input
                 id="guestName"
                 value={guestName}
                 onChange={(event) => setGuestName(event.target.value)}
-                placeholder="例如：张三（游客）"
+                placeholder="For example: Alex (Guest)"
               />
             </div>
           )}
         </div>
 
         <div className="row">
-          <h2>加入购物车</h2>
-          <span className="tag">{menuItems.length} 道菜</span>
+          <h2>Add to Cart</h2>
+          <span className="tag">{menuItems.length} dishes</span>
         </div>
 
         <div className="menu-grid">
@@ -229,21 +229,21 @@ export function OrderSessionClient({
                   <div className="row">
                     <div className="stack">
                       <h3>{item.chineseName || item.name}</h3>
-                      <p className="muted">{item.description || "点击详情查看更多信息。"}</p>
+                      <p className="muted">{item.description || "Open the detail page to view more information."}</p>
                     </div>
                     <strong>{formatCurrency(item.priceCents)}</strong>
                   </div>
 
                   {item.ingredientTags.length > 0 ? (
-                    <p className="muted">食材：{item.ingredientTags.join("、")}</p>
+                    <p className="muted">Ingredients: {item.ingredientTags.join(", ")}</p>
                   ) : null}
 
                   <div className="split-actions">
                     <Link href={`/menu/${item.id}?session=${sessionSlug}`} className="button button--ghost">
-                      查看详情
+                      View Details
                     </Link>
                     <button type="button" className="button button--accent" onClick={() => updateQuantity(item.id, 1)}>
-                      加入购物车
+                      Add to Cart
                     </button>
                   </div>
 
@@ -253,18 +253,18 @@ export function OrderSessionClient({
                         <button type="button" className="button button--ghost" onClick={() => updateQuantity(item.id, -1)}>
                           -1
                         </button>
-                        <span className="tag">已加入 {entry.quantity}</span>
+                        <span className="tag">Added {entry.quantity}</span>
                         <button type="button" className="button button--ghost" onClick={() => updateQuantity(item.id, 1)}>
                           +1
                         </button>
                       </div>
                       <div className="field">
-                        <label htmlFor={`item-note-${item.id}`}>单品备注</label>
+                        <label htmlFor={`item-note-${item.id}`}>Item Note</label>
                         <input
                           id={`item-note-${item.id}`}
                           value={entry.note}
                           onChange={(event) => changeItemNote(item.id, event.target.value)}
-                          placeholder="例如：少辣、不要葱"
+                          placeholder="For example: less spicy, no scallions"
                         />
                       </div>
                     </div>
@@ -278,11 +278,11 @@ export function OrderSessionClient({
 
       <aside className="form-panel cart-panel stack">
         <div className="row">
-          <h2>购物车</h2>
-          <span className="tag">{cartItems.length} 项</span>
+          <h2>Cart</h2>
+          <span className="tag">{cartItems.length} items</span>
         </div>
 
-        {cartItems.length === 0 ? <p className="muted">先从左边选几道菜，购物车会在这里汇总。</p> : null}
+        {cartItems.length === 0 ? <p className="muted">Choose a few dishes from the left and your cart will appear here.</p> : null}
 
         <div className="cart-list">
           {cartItems.map((entry) => {
@@ -305,31 +305,31 @@ export function OrderSessionClient({
                     +
                   </button>
                 </div>
-                {entry.note ? <p className="muted">备注：{entry.note}</p> : null}
+                {entry.note ? <p className="muted">Note: {entry.note}</p> : null}
               </div>
             );
           })}
         </div>
 
         <div className="field">
-          <label htmlFor="orderNote">整单备注</label>
+          <label htmlFor="orderNote">Order Note</label>
           <textarea
             id="orderNote"
             value={orderNote}
             onChange={(event) => setOrderNote(event.target.value)}
-            placeholder="例如：分开打包、统一 7 点取"
+            placeholder="For example: separate packaging, pickup at 7 PM"
           />
         </div>
 
         <div className="row cart-total">
-          <strong>合计</strong>
+          <strong>Total</strong>
           <strong>{formatCurrency(total)}</strong>
         </div>
 
         {status ? <p className="notice">{status}</p> : null}
 
         <button type="button" onClick={submitOrder} disabled={submitting}>
-          {submitting ? "提交中..." : "提交购物车"}
+          {submitting ? "Submitting..." : "Submit Cart"}
         </button>
       </aside>
     </div>

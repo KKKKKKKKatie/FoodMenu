@@ -9,10 +9,10 @@ export default async function AdminMenuPage() {
   const items = await listMenuItems();
 
   return (
-    <AdminShell title="菜单维护" description="管理员可以修改菜品、做法备注、标签和上架状态。">
+    <AdminShell title="Menu Management" description="Admins can update dishes, recipe notes, tags, and availability.">
       <div className="split-actions">
         <Link href="/admin/menu/new" className="button button--accent">
-          新增菜品
+          Add Menu Item
         </Link>
       </div>
 
@@ -22,7 +22,7 @@ export default async function AdminMenuPage() {
             <div className="menu-card__header">
               <div className="stack">
                 <h2>{item.chineseName || item.name}</h2>
-                <p className="muted">{item.description || "暂无描述"}</p>
+                <p className="muted">{item.description || "No description yet."}</p>
               </div>
               <strong>{formatCurrency(item.priceCents)}</strong>
             </div>
@@ -39,17 +39,17 @@ export default async function AdminMenuPage() {
             </div>
 
             {item.recipe ? <p className="muted">Recipe: {item.recipe.title}</p> : null}
-            <p className="muted">食材：{item.ingredientTags.join("、") || "未设置"}</p>
+            <p className="muted">Ingredients: {item.ingredientTags.join(", ") || "Not set"}</p>
 
             <div className="split-actions">
               <Link href={`/admin/menu/${item.id}`} className="button button--ghost">
-                编辑
+                Edit
               </Link>
               <form action={toggleMenuItemAvailabilityAction}>
                 <input type="hidden" name="id" value={item.id} />
                 <input type="hidden" name="nextValue" value={String(!item.isAvailable)} />
                 <button type="submit" className="button button--ghost">
-                  {item.isAvailable ? "下架" : "上架"}
+                  {item.isAvailable ? "Hide" : "Publish"}
                 </button>
               </form>
             </div>

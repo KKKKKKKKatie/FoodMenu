@@ -6,7 +6,7 @@ export default async function AdminOrdersPage() {
   const orders = await listOrders();
 
   return (
-    <AdminShell title="实时订单" description="后台会轮询最新订单，并允许管理员逐项拒绝无法供应的菜品。">
+    <AdminShell title="Live Orders" description="The admin panel polls for the latest orders and lets admins reject unavailable items one by one.">
       <OrdersBoard initialOrders={orders} />
     </AdminShell>
   );

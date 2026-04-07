@@ -23,13 +23,13 @@ export async function POST(request: Request) {
   const parsed = orderSchema.safeParse(payload);
 
   if (!parsed.success) {
-    return NextResponse.json({ error: "订单格式不正确。" }, { status: 400 });
+    return NextResponse.json({ error: "Invalid order payload." }, { status: 400 });
   }
 
   const session = await getSessionById(parsed.data.sessionId);
 
   if (!session || !session.isActive) {
-    return NextResponse.json({ error: "当前点单会话不可用。" }, { status: 400 });
+    return NextResponse.json({ error: "The current ordering session is unavailable." }, { status: 400 });
   }
 
   const menuItems = (await listMenuItems()).filter(
@@ -38,14 +38,14 @@ export async function POST(request: Request) {
   );
 
   if (menuItems.length !== parsed.data.items.length) {
-    return NextResponse.json({ error: "有菜品已经下架，请刷新后重新提交。" }, { status: 400 });
+    return NextResponse.json({ error: "Some dishes are no longer available. Please refresh and try again." }, { status: 400 });
   }
 
   await createOrder({
     sessionId: parsed.data.sessionId,
     customerName:
       parsed.data.customerMode === "guest"
-        ? `${parsed.data.customerName.trim()}（游客）`
+        ? `${parsed.data.customerName.trim()} (Guest)`
         : parsed.data.customerName.trim(),
     customerMode: parsed.data.customerMode,
     note: parsed.data.note?.trim() || null,

@@ -35,7 +35,7 @@ export default async function MenuDetailPage({
         <div className="hero__panel detail-copy">
           <span className="eyebrow">Menu Detail</span>
           <h1>{item.chineseName || item.name}</h1>
-          <p className="muted">{item.description || "这道菜目前还没有补充更多介绍。"}</p>
+          <p className="muted">{item.description || "This dish does not have additional details yet."}</p>
 
           <div className="tag-row">
             {item.categories.map((categoryValue) => (
@@ -47,7 +47,7 @@ export default async function MenuDetailPage({
             <span className="tag">{complexityLabels[item.complexity as Complexity]}</span>
             <span className="tag">{cookingMethodLabels[item.cookingMethod as CookingMethod]}</span>
             <span className={`tag ${item.isAvailable ? "tag--success" : "tag--danger"}`}>
-              {item.isAvailable ? "可点单" : "暂不可点"}
+              {item.isAvailable ? "Available" : "Unavailable"}
             </span>
           </div>
 
@@ -55,15 +55,15 @@ export default async function MenuDetailPage({
             <strong>{formatCurrency(item.priceCents)}</strong>
             <div className="split-actions">
               <Link href="/" className="button button--ghost">
-                返回首页
+                Back to Home
               </Link>
               {linkedSession ? (
                 <Link href={`/order/${linkedSession.slug}`} className="button button--accent">
-                  回到 {linkedSession.name} 点单
+                  Back to {linkedSession.name}
                 </Link>
               ) : sessions[0] ? (
                 <Link href={`/order/${sessions[0].slug}`} className="button button--accent">
-                  去点单
+                  Start Ordering
                 </Link>
               ) : null}
             </div>
@@ -71,8 +71,8 @@ export default async function MenuDetailPage({
 
           {item.ingredientTags.length > 0 ? (
             <div className="stack">
-              <h3>主要食材</h3>
-              <p>{item.ingredientTags.join("、")}</p>
+              <h3>Main Ingredients</h3>
+              <p>{item.ingredientTags.join(", ")}</p>
             </div>
           ) : null}
 

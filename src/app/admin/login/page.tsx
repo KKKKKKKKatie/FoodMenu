@@ -21,23 +21,23 @@ export default async function AdminLoginPage({
     <main className="shell hero">
       <div className="hero__panel" style={{ maxWidth: 520, margin: "0 auto" }}>
         <span className="eyebrow">Admin Login</span>
-        <h1>后台登录</h1>
-        <p className="muted">只有管理员能访问菜单编辑、会话创建和实时订单审核。</p>
+        <h1>Admin Sign In</h1>
+        <p className="muted">Only admins can access menu editing, session creation, and live order review.</p>
 
         <form action={loginAction} className="stack">
           {usingDemoCredentials ? (
-            <p className="notice">本地演示登录：admin@example.com / demo123456。配置环境变量后会自动切换。</p>
+            <p className="notice">Local demo login: admin@example.com / demo123456. This will switch automatically once environment variables are configured.</p>
           ) : null}
           <div className="field">
-            <label htmlFor="email">邮箱</label>
+            <label htmlFor="email">Email</label>
             <input id="email" name="email" type="email" placeholder="admin@example.com" required />
           </div>
           <div className="field">
-            <label htmlFor="password">密码</label>
+            <label htmlFor="password">Password</label>
             <input id="password" name="password" type="password" required />
           </div>
-          {hasError ? <p className="notice">邮箱或密码不正确。</p> : null}
-          <button type="submit">登录</button>
+          {hasError ? <p className="notice">Incorrect email or password.</p> : null}
+          <button type="submit">Sign In</button>
         </form>
       </div>
     </main>

@@ -5,14 +5,14 @@ export default function NotFound() {
     <main className="shell hero">
       <div className="hero__panel" style={{ maxWidth: 720 }}>
         <span className="eyebrow">Not Found</span>
-        <h1>这个页面不存在，或者点单会话已经结束。</h1>
-        <p className="muted">你可以回到菜单首页，或者让管理员重新开启一个新的点单会话。</p>
+        <h1>This page does not exist, or the ordering session has already ended.</h1>
+        <p className="muted">You can go back to the menu homepage or ask an admin to open a new ordering session.</p>
         <div className="split-actions">
           <Link href="/" className="button button--accent">
-            返回菜单
+            Back to Menu
           </Link>
           <Link href="/admin" className="button button--ghost">
-            进入后台
+            Open Admin
           </Link>
         </div>
       </div>

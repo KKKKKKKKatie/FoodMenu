@@ -12,7 +12,7 @@ export function MenuSummaryCard({
       <MenuVisual title={item.chineseName || item.name} imageUrl={item.imageUrl} />
       <div className="stack">
         <h3>{item.chineseName || item.name}</h3>
-        <p className="muted">{item.description || "点击查看详细介绍、食材和做法信息。"}</p>
+        <p className="muted">{item.description || "Open to view ingredients, cooking notes, and more details."}</p>
       </div>
     </Link>
   );

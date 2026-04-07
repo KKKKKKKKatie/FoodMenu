@@ -368,6 +368,7 @@ p {
 
 .filter-card--shell {
   align-self: start;
+  width: 100%;
 }
 
 .filter-card__head {
@@ -383,6 +384,12 @@ p {
 
 .filter-form--drawer {
   margin-top: 16px;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) auto;
+  align-items: end;
+}
+
+.filter-form--drawer .split-actions {
+  justify-content: flex-end;
 }
 
 .menu-visual {
@@ -514,6 +521,7 @@ p {
 
   .filter-form--drawer {
     display: none;
+    grid-template-columns: 1fr;
   }
 
   .filter-form--drawer.is-open {

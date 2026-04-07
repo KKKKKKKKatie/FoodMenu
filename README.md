@@ -2,14 +2,16 @@
 
 A no-cost-friendly food menu and ordering system built with Next.js, Prisma, and PostgreSQL.
 
+Deployed demo: https://food-menu-c295zjfvg-foodmenu.vercel.app/
+
 ## What this project includes
 
 - Public food menu with filters for:
-  - 分类，例如 `热菜`、`凉菜`、`荤菜`、`素菜`
-  - 食材，例如 `包菜`、`五花肉`
-  - 复杂程度
-  - 做法，例如 `炖菜`、`炒菜`
-  - 辣度
+  - Categories such as `Hot Dish`, `Cold Dish`, `Meat`, and `Vegetarian`
+  - Ingredients such as `Cabbage` and `Pork Belly`
+  - Complexity
+  - Cooking method such as `Stew` and `Stir Fry`
+  - Spice level
 - Mobile-friendly collapsible filter panel
 - Lightweight user identity flow: saved user name or guest checkout
 - Admin login protected by signed HttpOnly cookies

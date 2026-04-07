@@ -17,7 +17,7 @@ export default async function EditMenuItemPage({
   }
 
   return (
-    <AdminShell title="编辑菜品" description="你可以调整可用状态、更新 recipe，或者补充食材标签。">
+    <AdminShell title="Edit Menu Item" description="You can update availability, edit recipe notes, or add more ingredient tags.">
       <MenuItemForm item={item} action={saveMenuItemAction} />
     </AdminShell>
   );

@@ -28,7 +28,7 @@ export default async function OrderSessionPage({
       <div className="hero__panel">
         <span className="eyebrow">Ordering Session</span>
         <h1>{session.name}</h1>
-        <p className="muted">{session.description || "先把想吃的菜加入购物车，再统一提交订单。"}</p>
+        <p className="muted">{session.description || "Add the dishes you want to the cart first, then submit the order together."}</p>
       </div>
 
       <OrderSessionClient
